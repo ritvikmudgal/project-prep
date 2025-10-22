@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Age Predictor</title>
+  <style>
+    body {
+      font-family: Poppins, sans-serif;
+      background-color: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    h1 {
+      color: #333;
+    }
+    input {
+      padding: 10px;
+      font-size: 16px;
+      width: 200px;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 6px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .result {
+      margin-top: 20px;
+      background: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      box-shadow: 0px 3px 8px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>🔮 Age Predictor</h1>
+  <input type="text" id="nameInput" placeholder="Enter a name..." />
+  <button onclick="getAge()">Predict Age</button>
+  <div class="result" id="result"></div>
+
+<script>
+  const input = document.getElementById('nameInput');
+  input.addEventListener('keypress', function (event) {
+    if (event.key === 'Enter') {
+      event.preventDefault(); // Prevent form submission or page refresh
+      getAge(); // Call your function
+    }
+  });
+
+  async function getAge() {
+    const name = document.getElementById('nameInput').value;
+    const resultDiv = document.getElementById('result');
+    resultDiv.innerHTML = "Loading...";
+    try {
+      const res = await fetch(`http://localhost:3000/age/${name}`);
+      const data = await res.json();
+      if (data.age === null) {
+        resultDiv.innerHTML = `<p>No data found for <strong>${name}</strong>.</p>`;
+      } else {
+        resultDiv.innerHTML = `
+          <h3>Result:</h3>
+          <p><strong>Name:</strong> ${data.name}</p>
+          <p><strong>Predicted Age:</strong> ${data.age}</p>
+          <p><strong>Based on:</strong> ${data.count} samples</p>
+        `;
+      }
+    } catch (err) {
+      resultDiv.innerHTML = `<p style="color:red;">Error fetching data.</p>`;
+    }
+  }
+</script>
+
+</body>
+</html>
